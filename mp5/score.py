@@ -109,20 +109,8 @@ class ScoreNet(nn.Module):
         :param x: images of (N, D)
         :return: score loss, a scalar tensor
         """
-        # Get perturbed data and noise
-        noise, sigma = self.perturb(x)
-        x_perturbed = x + noise
-
-        # Get the score for perturbed data
-        score = self.get_score(x_perturbed, sigma)
-
-        # Calculate target: (x - x_perturbed) / sigma²
-        target = (x - x_perturbed) / (sigma ** 2)
-
-        # Calculate loss: ‖score - target‖²
-        loss = torch.mean(torch.sum((score - target) ** 2, dim=1))
-
-        return loss
+        # TODO: Implement this function
+        pass
 
     def forward(self, x):
         """
