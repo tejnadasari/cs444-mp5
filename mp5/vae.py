@@ -53,23 +53,18 @@ class VAE(nn.Module):
         """
         Calculate the loss of the VAE model given the input images.
         The loss consists of two terms: the reconstruction loss and the KL divergence loss.
-        The reconstruction loss is the mean squared error between the reconstructed images and the original images.
-        The KL divergence loss can be computed in closed form, and you should sum it along latent dimensions.
         :param x: input images of shape (N, D)
         :return: the loss of the VAE model, a scalar tensor
         """
         recons, mu, log_var = self(x)
 
-        # Reconstruction loss: mean squared error
-        recon_loss = torch.mean(torch.sum((recons - x) ** 2, dim=1))
+        # Reconstruction loss (MSE)
+        recon_loss = torch.mean((recons - x) ** 2)  # Mean over both batch and dimensions
 
-        # KL divergence loss: 0.5 * sum(1 + log(σ²) - μ² - σ²)
-        kl_loss = -0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp(), dim=1)
-        kl_loss = torch.mean(kl_loss)
+        # KL divergence: -0.5 * sum(1 + log(σ²) - μ² - σ²)
+        kl_loss = torch.mean(-0.5 * torch.sum(1 + log_var - mu.pow(2) - log_var.exp(), dim=1))
 
-        # Total loss is the sum of reconstruction loss and KL loss
         total_loss = recon_loss + kl_loss
-
         return total_loss
 
     def sample(self, batch_size, device):
